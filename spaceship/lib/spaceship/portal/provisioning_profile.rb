@@ -214,7 +214,7 @@ module Spaceship
           raise "Missing required parameter 'bundle_id'" if bundle_id.to_s.empty?
           raise "Missing required parameter 'certificate'. e.g. use `Spaceship::Certificate::Production.all.first`" if certificate.to_s.empty?
 
-          app = Spaceship::App.find(bundle_id, mac: mac)
+          app = Spaceship::App.set_client(client).find(bundle_id, mac: mac)
           raise "Could not find app with bundle id '#{bundle_id}'" unless app
 
           raise "Invalid sub_platform #{sub_platform}, valid values are tvOS" if !sub_platform.nil? and sub_platform != 'tvOS'
@@ -237,11 +237,11 @@ module Spaceship
             if self == Development or self == AdHoc
               # For Development and AdHoc we usually want all compatible devices by default
               if mac
-                devices = Spaceship::Device.all_macs
+                devices = Spaceship::Device.set_client(client).all_macs
               elsif sub_platform == 'tvOS'
-                devices = Spaceship::Device.all_apple_tvs
+                devices = Spaceship::Device.set_client(client).all_apple_tvs
               else
-                devices = Spaceship::Device.all_ios_profile_devices
+                devices = Spaceship::Device.set_client(client).all_ios_profile_devices
               end
             end
           end
